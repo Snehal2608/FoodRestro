@@ -1,9 +1,8 @@
 import React from 'react';
 // Import your images from the specified path
-import img3 from '../assets/images/img/img-3.jpg'; // Corresponds to 'Rainbow Vegetable Standards'
-import img4 from '../assets/images/img/img-4.jpg'; // Corresponds to 'Vegetarian Burger'
-import img5 from '../assets/images/img/img-5.jpg'; // Corresponds to 'Raspberry Stuffed French Toast'
-// You can import more images here as you add new cards, e.g., import img6 from '../assets/images/img/img-6.jpg';
+import img3 from '../images/img/img-3.jpg'; 
+import img4 from '../images/img/img-4.jpg'; 
+import img5 from '../images/img/img-5.jpg'; 
 
 
 function ExploreFoods() {

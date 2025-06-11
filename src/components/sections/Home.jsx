@@ -1,5 +1,5 @@
 import React from 'react';
-import heroBackgroundImage from '../assets/images/bg/bg-1.jpg';
+import heroBackgroundImage from '../images/bg/bg-1.jpg'; // Import the hero background image
 
 function Home({ onViewMenuClick }) {
   const handleMenuLinkClick = (event) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import useCounter from '../hooks/useCounter';
+import useCounter from '../hooks/useCounter'; 4
 
 function Counter() {
   const savingsCount = useCounter(1287, 2000);

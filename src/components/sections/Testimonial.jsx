@@ -1,12 +1,12 @@
 import React from 'react';
 import Slider from 'react-slick'; // Import Slider component
 // Import reviewer images
-import review1 from '../assets/images/review/review-1.jpg';
-import review2 from '../assets/images/review/review-2.jpg';
+import review1 from '../images/review/review-1.jpg';
+import review2 from '../images/review/review-2.jpg';
+import 'slick-carousel/slick/slick.css'; 
+import 'slick-carousel/slick/slick-theme.css'; 
 
-// NOTE: You must have imported slick-carousel/slick/slick.css and slick-carousel/slick/slick-theme.css
-// in your main entry file (e.g., src/index.js or App.js) for the core functionality.
-// We will then use Tailwind to override and customize their appearance.
+
 
 function Testimonial() {
   const testimonials = [

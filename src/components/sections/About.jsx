@@ -1,7 +1,7 @@
 import React from 'react';
 // Import your images. Adjust paths if necessary.
-import img1 from '../assets/images/img/img-1.png'; // Healthy Food Bowl
-import img2 from '../assets/images/img/img-2.png'; // Junk Food Collage
+import img1 from '../images/img/img-1.png'; // Healthy Food Bowl
+import img2 from '../images/img/img-1.png'; // Junk Food Collage
 
 function About() {
   // Define a reusable button style for the "Learn More" buttons
