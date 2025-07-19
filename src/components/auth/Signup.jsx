@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API_BASE_URL } from '../../api.js';
+import { API_BASE_URL } from '../../api.js'; // This is where API_BASE_URL is imported from
 import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
@@ -20,14 +20,15 @@ const Signup = () => {
     }
 
     try {
-      // CORRECTED: Point to /api/auth/signup as per your backend auth.js
-      const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
+      // This line is correct. It's expecting API_BASE_URL to be 'http://localhost:5000'
+      // so the final URL becomes 'http://localhost:5000/api/auth/register'.
+      const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         username,
         email,
         password,
       });
 
-      setMessage(response.data.message || 'Signup successful!'); // Assuming backend sends 'message'
+      setMessage(response.data.msg || 'Signup successful!'); // Backend auth.js sends 'msg'
       setError('');
       setUsername('');
       setEmail('');
@@ -36,8 +37,8 @@ const Signup = () => {
       navigate('/login'); // Redirect to login page after successful signup
 
     } catch (err) {
-      // Backend auth.js sends 'message' for errors
-      const backendMessage = err.response?.data?.message;
+      // Backend auth.js sends 'msg' for errors
+      const backendMessage = err.response?.data?.msg;
       setError(backendMessage || 'Signup failed');
       setMessage('');
     }

@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+// backend/server.js (or app.js) - Example integration
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -8,29 +7,34 @@ import cors from 'cors';
 // These imports are typically used within auth.js, but are harmless here.
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from './models/User.js'; 
+import User from './models/User.js'; // Corrected path to User model
 
 // Import your authentication routes
 import authRoutes from './routes/auth.js'; 
+// Import your testimonial routes
+import testimonialRoutes from './routes/testimonial.js'; 
+// Import your menu routes
+import menuRoutes from './routes/menu.js'; 
+// Import your order routes
+import orderRoutes from './routes/order.js'; 
+// Import the protect middleware from authMiddleware.js
+import { protect } from './middleware/authMiddleware.js'; 
 
 dotenv.config(); // Load environment variables from .env file
 
-// CRITICAL FIX: Initialize Express app correctly!
+// Initialize Express app
 const app = express(); 
 
 const PORT = process.env.PORT || 5000;
 
 // -------------------- Middleware --------------------
-// CRITICAL FIX: These middleware MUST come before any routes or routers!
 // Enable CORS for all origins.
 app.use(cors());
 
 // Middleware to parse JSON bodies from incoming requests.
-// This must be placed before any routes that expect JSON in req.body.
 app.use(express.json());
 
 // --- General Test Routes (can be removed later once auth works) ---
-// These routes help confirm your server is generally running and Express is handling GET requests.
 app.get('/', (req, res) => {
     res.send('Hello from the backend root!');
 });
@@ -41,34 +45,27 @@ app.get('/api', (req, res) => {
 
 
 // -------------------- Routes --------------------
-// CRITICAL FIX: Mount your authRoutes AFTER global middleware and general routes!
 // All routes defined in auth.js will be prefixed with '/api/auth'
-// So, auth.js's '/signup' becomes '/api/auth/signup', and '/login' becomes '/api/auth/login'
 app.use('/api/auth', authRoutes);
+// All routes defined in testimonials.js will be prefixed with '/api/testimonials'
+app.use('/api/testimonials', testimonialRoutes); 
+// All routes defined in menu.js will be prefixed with '/api/menu'
+app.use('/api/menu', menuRoutes); 
+// All routes defined in orders.js will be prefixed with '/api/orders'
+// The 'protect' middleware is now applied directly within orders.js routes for specific endpoints.
+app.use('/api/orders', orderRoutes); 
 
-// IMPORTANT: Ensure you DO NOT have duplicate /api/register or /api/login routes defined directly here.
-// They should be in auth.js if you're using the modular approach.
-/*
-// @route   POST /api/register
-// @desc    Register a new user
-// @access  Public
-app.post('/api/register', async (req, res) => {
-    // This block should be in auth.js
-});
 
-// @route   POST /api/login
-// @desc    Authenticate user & get token
-// @access  Public
-app.post('/api/login', async (req, res) => {
-    // This block should be in auth.js
+// Example of a protected route that requires authentication (optional, for testing)
+app.get('/api/protected', protect, (req, res) => {
+  res.json({ msg: `Welcome, user ${req.user.id}! You accessed a protected route.` });
 });
-*/
 
 
 // -------------------- Database Connection --------------------
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        await mongoose.connect(process.env.MONGO_URI); // Uses MONGO_URI from .env
         console.log('MongoDB Connected...');
     } catch (err) {
         console.error('MongoDB connection error:', err.message);

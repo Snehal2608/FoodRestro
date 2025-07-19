@@ -1,77 +1,105 @@
+// backend/routes/auth.js
 import express from 'express';
-import bcrypt from 'bcrypt'; // Using 'bcrypt' as you had it in your latest auth.js
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js'; // Ensure the path to your User model is correct
+import User from '../models/User.js'; // Adjust path if necessary
 
 const router = express.Router();
-console.log('Auth.js router file loaded and now processing requests for authentication.');
 
-// Signup Route: POST /api/auth/signup
-router.post('/signup', async (req, res) => {
-    try {
-        const { username, email, password } = req.body;
+// Get JWT secret from environment variables, with a fallback.
+// This ensures JWT_SECRET is ALWAYS defined, even if .env fails for some reason.
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_fallback'; // Added fallback for consistency
 
-        // Basic validation
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: 'Please provide all required fields' });
-        }
+// @route   POST /api/auth/register
+// @desc    Register a new user
+// @access  Public
+router.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-        if (existingUser) {
-            return res.status(409).json({ message: 'User with this username or email already exists' });
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Create new user
-        const newUser = new User({ username, email, password: hashedPassword });
-        await newUser.save();
-
-        res.status(201).json({ message: 'Signup successful!' });
-    } catch (error) {
-        console.error('Signup error:', error);
-        res.status(500).json({ message: 'Signup failed', error: error.message });
+  try {
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: 'User already exists' });
     }
+
+    // Create new user instance
+    user = new User({
+      username,
+      email,
+      password, // Password will be hashed by pre-save hook in User model
+    });
+
+    // Hash password (if not already handled by a pre-save hook in User model)
+    // Note: If you have a pre-save hook in your User model for hashing, this step can be removed.
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
+
+    // Create JWT payload
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+
+    // Sign the token
+    jwt.sign(
+      payload,
+      JWT_SECRET, // Use the same JWT_SECRET for signing
+      { expiresIn: '1h' }, // Token expires in 1 hour
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token, msg: 'User registered successfully' });
+      }
+    );
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
-// Login Route: POST /api/auth/login
+// @route   POST /api/auth/login
+// @desc    Authenticate user & get token
+// @access  Public
 router.post('/login', async (req, res) => {
-    console.log('--- Backend /api/auth/login route handler STARTED ---');
-    try {
-        const { identifier, password } = req.body; // 'identifier' can be username or email
-        console.log("Login request:", { identifier, password: '***' }); // Mask password for logging
+  const { email, password } = req.body;
 
-        // Find user by username or email
-        const user = await User.findOne({ $or: [{ username: identifier }, { email: identifier }] });
-        if (!user) {
-            console.log("User not found for identifier:", identifier);
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        // Validate password
-        // Assuming your User model has a method 'matchPassword', or use bcrypt.compare directly
-        const isPasswordValid = await bcrypt.compare(password, user.password); 
-
-        if (!isPasswordValid) {
-            console.log("Password incorrect for user:", identifier);
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        // Generate JWT token
-        const token = jwt.sign(
-            { userId: user._id, username: user.username },
-            process.env.JWT_SECRET, // Make sure JWT_SECRET is in your .env file
-            { expiresIn: '5h' } // Token expires in 5 hours
-        );
-        console.log("Login successful. Token generated.");
-
-        res.status(200).json({ token, message: 'Logged in successfully' });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Login failed', error: error.message });
+  try {
+    // Check if user exists
+    let user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: 'Invalid Credentials' });
     }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Invalid Credentials' });
+    }
+
+    // Create JWT payload
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+
+    // Sign the token
+    jwt.sign(
+      payload,
+      JWT_SECRET, // Use the same JWT_SECRET for signing
+      { expiresIn: '1h' }, // Token expires in 1 hour
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token, msg: 'Logged in successfully' });
+      }
+    );
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 export default router;

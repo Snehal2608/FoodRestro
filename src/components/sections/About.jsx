@@ -8,7 +8,8 @@ function About() {
   const learnMoreBtnClasses = "bg-[#b53247] text-white font-bold py-2.5 px-6 rounded-md hover:bg-[#9c293b] transition duration-300 ease-in-out text-base focus:outline-none focus:ring-2 focus:ring-[#b53247] focus:ring-opacity-50";
 
   return (
-    <section id="about" className="py-16 md:py-24 bg-gray-50">
+    // Changed id from "about" to "aboutus" to match the Header component's navigation link.
+    <section id="aboutus" className="py-16 md:py-24 bg-gray-50">
       {/* First block: Image on Left, Text on Right (matches Screenshot 2025-05-31 092445.jpg) */}
       <div className="container mx-auto px-4 mb-16 md:mb-24">
         {/* Layout for Image Left, Text Right */}
@@ -22,13 +23,13 @@ function About() {
           </div>
           {/* Right Column (visual order): Text Content */}
           <div className="w-full md:w-5/12 text-center md:text-left md:pl-6">
-            {/* Updated Heading text and font-semibold */}
+            {/* Updated Heading text and font-semibold for Italian theme */}
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4">
-              We Pride Ourselves On Making Real Food From The Best Integrtents.
+              We Craft Authentic Italian Flavors From The Finest Ingredients.
             </h2>
-            {/* Decreased Paragraph text size from text-base md:text-lg to text-sm md:text-base */}
+            {/* Updated Paragraph text for Italian theme */}
             <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-6">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque dolor ullam recusandae nostrum. Repellat accusamus assumenda eligendi praesentium minus fugiat? Repellendus sunt aut, error ad eveniet voluptate officia? Accusamus
+              At Foodies' Delight, we are passionate about bringing you the true taste of Italy. Every dish is a celebration of traditional recipes, prepared with the freshest, locally-sourced produce and imported Italian specialties.
             </p>
             <button className={learnMoreBtnClasses}>Learn More</button>
           </div>
@@ -41,26 +42,26 @@ function About() {
         <div className="flex flex-col md:flex-row items-center justify-between">
           {/* Left Column (visual order): Text Content */}
           <div className="w-full md:w-5/12 text-center md:text-left mb-8 md:mb-0 md:pr-6">
-            {/* Updated Heading text and font-semibold */}
+            {/* Updated Heading text and font-semibold for Italian theme */}
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-4">
-              We Make Everything With Hand With Best Possible Ingredients
+              Handmade With Love, Using Time-Honored Italian Traditions.
             </h2>
-            {/* Decreased Paragraph text size from text-base md:text-lg to text-sm md:text-base */}
+            {/* Updated Paragraph text for Italian theme */}
             <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-6">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus ducimus omnis dolor dolorem itaque laudantium dicta unde harum veritatis ea. Nostrum possimus consectetur optio, iusto expedita assumenda esse quasi suscipit!
+              Our commitment to quality means we make everything by hand, from our fresh pasta to our rich sauces, just like Nonna used to. We believe in the art of traditional Italian cooking, ensuring every bite is a delightful experience.
             </p>
             <ul className="list-none space-y-3 py-3">
               <li className="flex items-start text-gray-700">
                 <i className="fas fa-check-circle text-[#b53247] mr-3 mt-1"></i>
-                <span>Etiam sed dolor ac diam volutpat.</span>
+                <span>Fresh, Locally Sourced Produce</span>
               </li>
               <li className="flex items-start text-gray-700">
                 <i className="fas fa-check-circle text-[#b53247] mr-3 mt-1"></i>
-                <span>Erat volutpat aliquet imperdiet.</span>
+                <span>Authentic Italian Recipes</span>
               </li>
               <li className="flex items-start text-gray-700">
                 <i className="fas fa-check-circle text-[#b53247] mr-3 mt-1"></i>
-                <span>purus a odio finibus bibendum</span>
+                <span>Handmade Pasta & Sauces Daily</span>
               </li>
             </ul>
             <button className={learnMoreBtnClasses}>Learn More</button>

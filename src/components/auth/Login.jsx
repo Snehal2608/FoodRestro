@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API_BASE_URL } from '../../api.js';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../api.js'; // Assuming API_BASE_URL is correctly defined here
 
 /**
  * Login Component
@@ -12,7 +12,8 @@ import { useNavigate, Link } from 'react-router-dom';
  * typically to update the authentication state in a parent component (App.js).
  */
 const Login = ({ onLoginSuccess }) => {
-  const [identifier, setIdentifier] = useState(''); // State for username or email input
+  // Changed state variable from 'identifier' to 'email' to match backend expectation
+  const [email, setEmail] = useState('');     
   const [password, setPassword] = useState('');     // State for password input
   const [error, setError] = useState('');           // State for displaying login error messages
   const navigate = useNavigate();                   // Hook for programmatic navigation
@@ -28,10 +29,9 @@ const Login = ({ onLoginSuccess }) => {
     setError(''); // Clear any previous error messages
 
     try {
-      // Send a POST request to the backend login endpoint
-      // The backend expects 'identifier' (username/email) and 'password'
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-        identifier, 
+      // CORRECTED: Sending 'email' instead of 'identifier' to match backend's expected payload
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+        email, // Changed from identifier to email
         password,
       });
 
@@ -60,7 +60,7 @@ const Login = ({ onLoginSuccess }) => {
       if (err.response) {
         // The server responded with a status code outside the 2xx range (e.g., 401, 403, 404, 500)
         // Display the error message provided by the backend, or a generic server error message
-        setError(err.response.data.message || 'Login failed: Server responded with an error.');
+        setError(err.response.data.msg || 'Login failed: Server responded with an error.'); // Backend sends 'msg'
       } else if (err.request) {
         // The request was made but no response was received (e.g., network error, server down)
         setError('Login failed: No response from server. Please check your internet connection or the API URL.');
@@ -81,16 +81,16 @@ const Login = ({ onLoginSuccess }) => {
         {error && <p className="text-red-500 text-sm mb-4 p-2 bg-red-100 rounded-md border border-red-200">{error}</p>} {/* Enhanced error styling */}
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="identifier">
-              Username or Email
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email"> {/* Changed htmlFor to 'email' */}
+              Email
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="identifier"
-              type="text"
-              placeholder="Enter your username or email"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              id="email" // Changed id to 'email'
+              type="email" // Changed type to 'email' for better validation and UX
+              placeholder="Enter your email" // Updated placeholder
+              value={email} // Changed value to 'email'
+              onChange={(e) => setEmail(e.target.value)} // Changed onChange to 'setEmail'
               required
             />
           </div>

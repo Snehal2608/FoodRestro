@@ -11,11 +11,15 @@ import ExploreFoods from './components/sections/ExploreFoods';
 import Testimonial from './components/sections/Testimonial';
 import Menu from './components/sections/Menu';
 import FAQ from './components/sections/FAQ';
+import Chatbot from './components/Chatbot'; // Import the Chatbot component
 
 // Import authentication components
 import Login from './components/auth/Login.jsx';
 import Signup from './components/auth/Signup.jsx'; // Assuming this is for registration
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx'; // Your custom protected route component
+
+// NEW: Import the OrderPage component
+import OrderPage from './components/OrderPage';
 
 /**
  * MainWebsiteContent Component
@@ -30,49 +34,52 @@ import ProtectedRoute from './components/auth/ProtectedRoute.jsx'; // Your custo
 const MainWebsiteContent = ({ onViewMenuClick, showMenu, onLogout }) => (
   <>
     {/* Header component: Contains navigation links and logout button */}
-    <Header onLogout={onLogout} /> 
+    <Header onLogout={onLogout} />
 
-    {/* Home section: The initial landing view for authenticated users */}
-    <section id="home">
+    {/*
+      Sections are rendered. 'pt-4' is included for general top padding.
+      The programmatic scrolling in Header.jsx handles the correct offset for sticky header.
+    */}
+    <section id="home" className="pt-4">
       <Home onViewMenuClick={onViewMenuClick} />
     </section>
 
-    {/* Counter section: Example section for displaying statistics or dynamic numbers */}
-    <section>
+    {/* Counter section */}
+    <section className="pt-4">
       <Counter />
     </section>
 
-    {/* About Us section: Provides information about the website or organization */}
-    <section id="aboutus">
+    <section id="aboutus" className="pt-4">
       <About />
     </section>
 
-    {/* Story section: A narrative or descriptive content section */}
-    <section>
+    {/* Story section */}
+    <section className="pt-4">
       <Story />
     </section>
 
-    {/* Explore Foods section: Showcases various food items or categories */}
-    <section id="explorefoods">
+    <section id="explorefoods" className="pt-4">
       <ExploreFoods />
     </section>
 
-    {/* Testimonial section: Displays customer reviews or endorsements */}
-    <section id="reviews">
+    <section id="reviews" className="pt-4">
       <Testimonial />
     </section>
 
-    {/* Menu section: Conditionally rendered based on the 'showMenu' state, typically toggled by a button */}
+    {/* Menu section: Conditionally rendered */}
     {showMenu && (
-      <section id="menu">
+      <section id="menu" className="pt-4">
         <Menu />
       </section>
     )}
 
-    {/* FAQ section: Frequently Asked Questions and their answers */}
-    <section id="faq">
+    <section id="faq" className="pt-4">
       <FAQ />
     </section>
+
+    {/* Chatbot Component - Rendered at the end of MainWebsiteContent */}
+    {/* Pass the onViewMenuClick function to the Chatbot */}
+    <Chatbot onViewMenuClick={onViewMenuClick} />
   </>
 );
 
@@ -98,13 +105,21 @@ function App() {
   /**
    * Effect hook to scroll to the menu section when 'showMenu' state becomes true.
    * A small timeout is used to ensure the component has rendered before attempting to scroll.
+   * This now also accounts for the sticky header height.
    */
   useEffect(() => {
     if (showMenu) {
       const timer = setTimeout(() => {
         const menuSection = document.getElementById('menu');
         if (menuSection) {
-          menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const headerElement = document.querySelector('header');
+          const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+          const offsetTop = menuSection.offsetTop - headerHeight;
+
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
         }
       }, 100); // Delay to allow menu section to render
 
@@ -119,17 +134,14 @@ function App() {
    * to ensure it's still valid and not expired.
    */
   useEffect(() => {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
     if (token) {
-      // For a robust application, you'd also want to:
-      // 1. Decode the token to get user info (e.g., using jwt-decode)
-      // 2. Potentially send a request to your backend to validate the token's expiry/integrity
       setIsAuthenticated(true);
     } else {
-      setIsAuthenticated(false); // Ensure isAuthenticated is false if no token is found
+      setIsAuthenticated(false);
     }
-    setLoadingAuth(false); // Mark authentication check as complete
-  }, []); // Empty dependency array means this effect runs only once after the initial render
+    setLoadingAuth(false);
+  }, []);
 
   /**
    * Callback function passed to the Login component.
@@ -137,7 +149,6 @@ function App() {
    */
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
-    // Note: The navigation to '/' after login is handled directly within the Login component itself.
   };
 
   /**
@@ -145,13 +156,10 @@ function App() {
    * Removes the authentication token from localStorage and updates the 'isAuthenticated' state.
    */
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the stored token from browser storage
-    setIsAuthenticated(false); // Set authentication status to false
-    // You might optionally navigate to the login page here if you want an explicit redirect after logout.
-    // For example: navigate('/login'); if you import useNavigate here.
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
   };
 
-  // Display a loading indicator while the initial authentication check is in progress
   if (loadingAuth) {
     return <div className="flex items-center justify-center h-screen text-xl">Loading application...</div>;
   }
@@ -160,35 +168,22 @@ function App() {
     <Router>
       <div className="bg-white text-black font-inter">
         <Routes>
-          {/* Public Route: Login Page */}
-          {/* Passes handleLoginSuccess to Login component to update app's auth state */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          
-          {/* Public Route: Signup Page */}
-          {/* Currently a dummy route, assuming Signup component handles its own logic */}
           <Route path="/signup" element={<Signup />} />
-
-          {/* Protected Routes: Routes wrapped by ProtectedRoute are only accessible to authenticated users */}
-          {/* ProtectedRoute uses the 'isAuthenticated' prop to determine access */}
           <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-            {/* Main Application Homepage */}
-            {/* This route renders the MainWebsiteContent component when the user is authenticated and at the root path */}
             <Route
               path="/"
               element={
                 <MainWebsiteContent
                   onViewMenuClick={handleViewMenuClick}
                   showMenu={showMenu}
-                  onLogout={handleLogout} // Pass logout handler to MainWebsiteContent (and then to Header)
+                  onLogout={handleLogout}
                 />
               }
             />
-            {/* Add more protected routes here, e.g., for user profile, dashboard, etc. */}
-            {/* <Route path="/profile" element={<Profile />} /> */}
+            {/* NEW: Route for the Order Page - accessible only if authenticated */}
+            <Route path="/order" element={<OrderPage />} />
           </Route>
-
-          {/* Catch-all Route: Handles any unmatched URLs */}
-          {/* If authenticated, redirects to '/', otherwise redirects to '/login' */}
           <Route
             path="*"
             element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />}

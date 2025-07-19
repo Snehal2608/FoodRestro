@@ -1,4 +1,3 @@
-// FAQ.jsx
 import React from 'react';
 
 const FAQ = () => {
@@ -46,9 +45,13 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-16 md:py-24 bg-gray-100 text-center">
-      <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
-      <p className="text-lg text-gray-600 mb-12">Find answers to common questions about our food delivery service.</p>
+    <section id="faq" className="py-16 md:py-24 bg-gray-100">
+
+      {/* Added 'text-center' to center align the heading and paragraph */}
+      <div className="text-center">
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2>
+        <p className="text-lg text-gray-600 mb-12">Find answers to common questions about our food delivery service.</p>
+      </div>
 
       <div className="max-w-4xl mx-auto px-4">
         {faqItems.map((item, index) => (

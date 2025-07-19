@@ -51,7 +51,7 @@ function ExploreFoods() {
   ];
 
   return (
-    <section id="explore-foods" className="py-16 md:py-24 bg-gray-50"> {/* Section background and vertical padding */}
+    <section id="explorefoods" className="py-16 md:py-24 bg-gray-50"> {/* Section background and vertical padding */}
       <div className="container mx-auto px-4"> {/* Main container for cards, centered with horizontal padding */}
 
         {/* Food Cards Grid */}
